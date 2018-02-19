@@ -14,3 +14,4 @@ Command Line App to use Food2Fork's Search API through REST to fetch top recipe 
     - `python .py` 
 
 ## Design 
+![Could not display. Check design/SequenceDiag.png](/design/SequenceDiag.png?raw=true "Component Diagram")
