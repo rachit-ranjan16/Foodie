@@ -2,35 +2,44 @@
 actor user #red
 participant foodie
 participant food2fork
-activate user
-user->foodie: Start Execution
-activate foodie
-foodie->user: Request Ingredients
+
+user->foodie: <<Start Execution>>
+foodie->user: Request Ingredients (csv)
 user->foodie: [Ingredients]
+
 loop till user is done entering ingredients
     foodie->user: Enter more Ingredients?
     alt Yes
-        foodie->user: Request Ingredients
+        foodie->user: Request Ingredients(csv)
         user->foodie: [Ingredients]
     end
 end
 
-foodie->food2fork: GET Search Recipe \n QueryParams={\nAPIKey,\nIngredients,\nSort by Trending}
-activate food2fork
+foodie->food2fork: GET Search Recipe QueryParams={\nAPIKey, Ingredients, Sort by Trending}
+
 alt Trending Recipes found
     food2fork->foodie: 200 OK\n{count, recipes=[...]}
 else No Trending Recipes found
+
     food2fork->foodie: 200 OK\n{count=0,recipes=[]}
     foodie->user:No Trending Recipes\nSearch by Ratings?
-    alt Yes
-        user->foodie: Yes
-        foodie->food2fork: GET Search Recipe \n QueryParams={\nAPIKey,\nIngredients,\nSort by Rating}
-        food2fork->foodie: 200 OK\n{count, recipes=[...]}
+    loop till a valid input is entered
+        alt No
+            user->foodie: No\n<<Execution Ends>>
+        else Yes
+            user->foodie: Yes
+            foodie->food2fork: GET Search Recipe QueryParams={\nAPIKey, Ingredients, Sort by Rating}
+            alt No Top Rated Recipes Found
+                food2fork->foodie: 200 OK\n{count=0,recipes=[]}
+                foodie->user: No Top Rated Recipes\nfor the given ingredients\n<<Execution Ends>>
+            else Top Rated Recipes Found
+                food2fork->foodie: 200 OK\n{count, recipes=[...]}
+            end
+        end
     end
 end
-deactivate food2fork
+
 foodie->foodie: Figure out missing ingredients
 foodie->user: Report Missing Ingredients
-deactivate foodie
-deactivate user
+
 @enduml
