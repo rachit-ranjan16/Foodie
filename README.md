@@ -22,5 +22,5 @@ Command Line App to use Food2Fork's Search API through REST calls to fetch top r
 
 
 ## Design 
-Positive Flow  
+#### Sequence Diagram
 ![Could not display. Check design/SequenceDiag.png](/design/SequenceDiag.png?raw=true "Component Diagram")
