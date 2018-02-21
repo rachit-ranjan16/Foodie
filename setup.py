@@ -4,7 +4,7 @@ desc = "Command Line App to use Food2Fork's Search API through REST " \
 
 setup(
    name='foodie',
-   version='0.0.2',
+   version='0.0.3',
    url='https://github.com/rachit-ranjan16/foodie',
    description=desc,
    long_description=desc,
