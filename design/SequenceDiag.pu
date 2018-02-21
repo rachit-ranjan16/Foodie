@@ -16,9 +16,9 @@ loop till user is done entering ingredients
 end
 
 foodie->food2fork: GET Search Recipe QueryParams={\nAPIKey, Ingredients, Sort by Trending}
-alt Call Failed
+alt GET Call Failed
     foodie->user: GET Call to food2fork failed<<Execution Ends>>
-else Call Succeeded
+else GET Call Succeeded
     alt Trending Recipes found
         food2fork->foodie: 200 OK\n{count, recipes=[...]}
     else No Trending Recipes found
