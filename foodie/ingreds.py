@@ -13,8 +13,8 @@ FOOD_2_FORK = 'food2fork'
 API_KEY = 'api_key'
 TRENDING = 'trending'
 RATING = 'rating'
-YES_LIST = ['y', 'yes', 'yep', 'yeah']
-NO_LIST = ['n', 'no', 'nope']
+YES_LIST = 'YES_LIST'
+NO_LIST = 'NO_LIST'
 
 
 class ingreds(object):
@@ -49,12 +49,12 @@ class ingreds(object):
         self.get_ingreds()
         ing_str = self.get_pretty_ingred_str()
         # Search API Payload - sort by trending
-        data = {KEY: self.config.get(FOOD_2_FORK, API_KEY),
+        params = {KEY: self.config.get(FOOD_2_FORK, API_KEY),
                 Q: ing_str,
                 SORT: self.config.get(FOOD_2_FORK, TRENDING)}
 
         try:
-            r = requests.get(self.config.get(FOOD_2_FORK, SEARCH_API_URL), params=data)
+            r = requests.get(self.config.get(FOOD_2_FORK, SEARCH_API_URL), params=params)
             if r.status_code != 200:
                 print('[ERROR] Received %d from Food2Fork for Search API' % r.status_code)
                 return
@@ -66,9 +66,9 @@ class ingreds(object):
             print('\nNo Results found for Trending Search')
             if self.get_search_by_ratings_enabled():
                 # Sort by top rated
-                data[SORT] = self.config.get(FOOD_2_FORK, RATING)
+                params[SORT] = self.config.get(FOOD_2_FORK, RATING)
                 try:
-                    r = requests.get(self.config.get(FOOD_2_FORK, SEARCH_API_URL), params=data)
+                    r = requests.get(self.config.get(FOOD_2_FORK, SEARCH_API_URL), params=params)
                     if r.status_code != 200:
                         print('[ERROR] Received %d from Food2Fork for Search API' % r.status_code)
                         return
@@ -86,11 +86,11 @@ class ingreds(object):
             return
 
         tr_id = response_json['recipes'][0]['recipe_id']
-        data = {KEY: self.config.get(FOOD_2_FORK, API_KEY),
-                R_ID: tr_id}
+        params = {KEY: self.config.get(FOOD_2_FORK, API_KEY),
+                  R_ID: tr_id}
 
         try:
-            r = requests.get(self.config.get(FOOD_2_FORK, GET_API_URL), params=data)
+            r = requests.get(self.config.get(FOOD_2_FORK, GET_API_URL), params=params)
             if r.status_code != 200:
                 print('[ERROR] Received %d from Food2Fork for Get API' % r.status_code)
                 return
@@ -106,14 +106,15 @@ class ingreds(object):
         """
         Takes Yes/No input from the user for fetching recipes by ratings
         Loops till a valid input is entered
+
         :return: Boolean value corresponding to choice
         """
         while True:
             choice = input("Do you want search by ratings? (Y/N)\n")
-            if choice.lower() in NO_LIST:
+            if choice.lower() in self.config.get(FOOD_2_FORK, NO_LIST):
                 sch_by_ratings = False
                 break
-            elif choice.lower() in YES_LIST:
+            elif choice.lower() in self.config.get(FOOD_2_FORK, YES_LIST):
                 sch_by_ratings = True
                 break
             else:
@@ -125,6 +126,7 @@ class ingreds(object):
         Creates a dict out of list of all ingredients with True values
         Marks the ingredients in all_ings dict as False if user entered ingredient is its substring
         Ingredients marked False are not used for further comparisons
+
         :param all_ings:
         :return: Ingredient Dictionary with repeated ingredients marked False
         """
@@ -141,6 +143,7 @@ class ingreds(object):
     def print_missing_ingreds(self, all_ings_dict, title):
         """
         Prints the top receipe title and the list of ingredients user was missing from the initial input
+
         :param all_ings_dict:
         :param top_recipe:
         :return: None
@@ -153,6 +156,7 @@ class ingreds(object):
     def get_pretty_ingred_str(self):
         """
         Format ingredients into lowercase csv
+
         :return: pretty printed comma separated string of input ingredients
         """
         ingreds_str = ''
@@ -164,6 +168,7 @@ class ingreds(object):
         """
         Inputs csv ingredient list from the user
         Input loops till user is satisfied
+
         :return:
         """
         more_inp = True
@@ -171,10 +176,10 @@ class ingreds(object):
             self.ing_list.append((input("Enter Ingredient(s) - separated by commas\n")).strip())
             while True:
                 choice = input("Do you want to enter more Ingredients? (Y/N)\n")
-                if choice.lower() in NO_LIST:
+                if choice.lower() in self.config.get(FOOD_2_FORK, NO_LIST):
                     more_inp = False
                     break
-                elif choice.lower() in YES_LIST:
+                elif choice.lower() in self.config.get(FOOD_2_FORK, YES_LIST):
                     break
                 else:
                     print("Invalid Input. Try Again..")

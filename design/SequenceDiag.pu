@@ -31,7 +31,7 @@ else GET Call Succeeded
                 user->foodie: Yes
                 foodie->food2fork: GET Search Recipe QueryParams={\nAPIKey, Ingredients, Sort by Rating}
                 alt GET Call Failed
-                    foodie->user: GET Call to food2fork failed**<<Execution Ends>>**
+                    foodie->user: GET Call to food2fork failed**\n<<Execution Ends>>**
                 else GET Call Succeeded
                     alt No Top Rated Recipes Found
                         food2fork->foodie: 200 OK\n{count=0,recipes=[]}
