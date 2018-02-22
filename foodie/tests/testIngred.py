@@ -1,11 +1,12 @@
 import unittest
 from ..ingreds import ingreds
 
+
 class testIngred(unittest.TestCase):
 
     def setUp(self):
-        self.ing =ingreds(ing_list=['bread', 'butter', 'milk'])
-        print (self.ing.ing_list)
+        self.ing = ingreds(ing_list=['bread', 'butter', 'milk'])
+        print(self.ing.ing_list)
 
     def testGetIngredients(self):
         # TODO figure out testing strategy
